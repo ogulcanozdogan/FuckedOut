@@ -24,26 +24,47 @@ const mysql = require('mysql2/promise');
         await page.goto(menuUrl, { waitUntil: 'networkidle2' });
         console.log(`Sayfa yüklendi: ${menuUrl}`);
 
-        const menus = await page.evaluate(() => {
-            return Array.from(document.querySelectorAll('a[itemprop="url"]')).map(menu => ({
-                title: menu.querySelector('h2[itemprop="name"]') ? menu.querySelector('h2[itemprop="name"]').innerText : 'Unknown',
-                price: menu.querySelector('meta[itemprop="price"]') ? menu.querySelector('meta[itemprop="price"]').content : 'Unknown',
-                image: menu.querySelector('img[itemprop="image"]') ? menu.querySelector('img[itemprop="image"]').src : 'No image',
-                link: menu.href ? menu.href : '#'
-            }));
-        });
+        let seenMenus = new Set();
+        let moreButtonExists = true;
 
-        for (const menu of menus) {
-            // Veritabanına menü kaydet
-            try {
-                const [result] = await connection.execute(
-                    'INSERT INTO menus (vendor_id, title, price, image, link) VALUES (?, ?, ?, ?, ?)',
-                    [seller.id, menu.title, menu.price, menu.image, menu.link]
-                );
-                console.log(`Menü eklendi: ${menu.title}, ${menu.price}, ${menu.image}, ${menu.link}`);
-            } catch (error) {
-                console.error('Veritabanına ekleme hatası:', error.message);
+        while (moreButtonExists) {
+            const menus = await page.evaluate(() => {
+                return Array.from(document.querySelectorAll('a[itemprop="url"]')).map(menu => ({
+                    title: menu.querySelector('h2[itemprop="name"]') ? menu.querySelector('h2[itemprop="name"]').innerText : 'Unknown',
+                    price: menu.querySelector('meta[itemprop="price"]') ? menu.querySelector('meta[itemprop="price"]').content : 'Unknown',
+                    image: menu.querySelector('img[itemprop="image"]') ? menu.querySelector('img[itemprop="image"]').src : 'No image',
+                    link: menu.href ? menu.href : '#'
+                }));
+            });
+
+            for (const menu of menus) {
+                if (!seenMenus.has(menu.link)) {
+                    seenMenus.add(menu.link);
+
+                    try {
+                        const [result] = await connection.execute(
+                            'INSERT INTO menus (vendor_id, title, price, image, link) VALUES (?, ?, ?, ?, ?)',
+                            [seller.id, menu.title, menu.price, menu.image, menu.link]
+                        );
+                        console.log(`Menü eklendi: ${menu.title}, ${menu.price}, ${menu.image}, ${menu.link}`);
+                    } catch (error) {
+                        console.error('Veritabanına ekleme hatası:', error.message);
+                    }
+                }
             }
+
+            // Sayfanın sonuna kadar kaydır ve "Show more" butonuna tıkla
+            moreButtonExists = await page.evaluate(async () => {
+                const moreButton = document.querySelector('div.flex.items-center.justify-center.mt-5 button');
+                if (moreButton) {
+                    moreButton.click();
+                    return true;
+                }
+                return false;
+            });
+
+            // Yeni kayıtların yüklenmesi için bekle
+            await new Promise(resolve => setTimeout(resolve, 2000));
         }
     }
 

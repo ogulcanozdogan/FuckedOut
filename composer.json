@@ -1,8 +1,0 @@
-{
-  "require": {
-    "guzzlehttp/guzzle": "^7.9",
-    "symfony/dom-crawler": "^5.4",
-    "symfony/css-selector": "^5.4",
-    "voku/simple_html_dom": "^4.8"
-  }
-}

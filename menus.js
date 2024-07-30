@@ -95,6 +95,9 @@ async function fetchMenuDetails(page, vendorId, url) {
       }
     });
 
+    const pricingInfo = $('div[itemtype="https://schema.org/Offer"] span:nth-of-type(2)').text();
+    const productType = $('div.text-gray-600').text().trim();
+
     const menu = {
       vendor_id: vendorId,
       name: $('h1[itemprop="name"]').text(),
@@ -103,6 +106,8 @@ async function fetchMenuDetails(page, vendorId, url) {
       effects: $('div.menu__effects > span.menu__effect').map((i, el) => $(el).text()).get().join(', '),
       description: $('div.menu__description[itemprop="description"]').text(),
       imageUrl: photos.join(', '),
+      pricingInfo: pricingInfo,
+      productType: productType
     };
 
     await saveMenuToDB(menu);

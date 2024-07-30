@@ -18,8 +18,29 @@ const vendorUrls = [
   'https://leafedout.com/cannabis-vendor/greeninflorida',
   'https://leafedout.com/cannabis-vendor/Colorsound',
   'https://leafedout.com/cannabis-vendor/big-chief',
-  'https://leafedout.com/cannabis-vendor/greenmidas'
+  'https://leafedout.com/cannabis-vendor/greenmidas',
+  'https://leafedout.com/cannabis-vendor/TeamGG',
+  'https://leafedout.com/cannabis-vendor/panda_exotic',
+  'https://leafedout.com/cannabis-vendor/greenmidas',
+  'https://leafedout.com/cannabis-vendor/propermeds',
+  'https://leafedout.com/cannabis-vendor/Helix',
+  'https://leafedout.com/cannabis-vendor/mellow-lane-mary-jane',
+  'https://leafedout.com/cannabis-vendor/GreenGhostExotics',
+  'https://leafedout.com/cannabis-vendor/topshelfprimebuds',
+  'https://leafedout.com/cannabis-vendor/Orlandoweed',
+  'https://leafedout.com/cannabis-vendor/93_premiumgas',
+  'https://leafedout.com/cannabis-vendor/TheTreeKings',
+  'https://leafedout.com/cannabis-vendor/puritysupreme',
+  'https://leafedout.com/cannabis-vendor/MiamiDsLoud',
+  'https://leafedout.com/cannabis-vendor/PotEmporium',
+  'https://leafedout.com/cannabis-vendor/mmcdispo',
+  'https://leafedout.com/cannabis-vendor/greenmidas_miami',
+  'https://leafedout.com/cannabis-vendor/thegoodguys420',
+  'https://leafedout.com/cannabis-vendor/Marvel_Gas',
+  'https://leafedout.com/cannabis-vendor/topshelfatl',
+  'https://leafedout.com/cannabis-vendor/cannabuzz'
 ];
+
 
 async function fetchVendors() {
   const browser = await puppeteer.launch({ headless: false }); // Tarayıcıyı görünür yaparak debug kolaylığı
